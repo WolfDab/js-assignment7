@@ -1,6 +1,7 @@
 
 const express = require('express')
 const app = express()
+const path = require('path')
 
 const port = process.env.PORT || 3000
 
@@ -14,18 +15,28 @@ const todos = [
 ]
 
 app.get('/', (_, response) => {
-	response.sendFile('index.html', { root })
+	response.sendFile('index.html', { root: path.join(__dirname, 'public') })
 })
 
+app.get('/api/todos/random/exclude/:id', (request, response) => {
+    const { id } = request.params
+    const filteredTodos = todos.filter(todo => todo.id.toString() !== id)
+    if (filteredTodos.length === 0) {
+        return response.json(null)
+    }
+    const randomIndex = Math.floor(Math.random() * filteredTodos.length)
+    response.json(filteredTodos[randomIndex])
+})
 
+app.post('/api/todos/new',  (request, response) => {
+    const { item, complete } = request.body
+    todos.push({ id: todos.length + 1, item, complete })
+    response.json({ message: 'List item added!' })
+})
 
-// GET /api/todos
+app.use((request, response) => {
+    response.status(404).sendFile('404.html', { root })
+})
 
-// POST /api/todos
-
-// PUT /api/todos/:id
-
-
-
-const message = `Server running: http://localhost:${port}`
+const message = `Server running: http://localhost:3000`
 app.listen(port, () => console.log(message))
