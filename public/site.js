@@ -9,19 +9,20 @@
 		const todos = await response.json()
 		return todos
 	}
-
+		
 	const toggleTodo = async (id, complete) => {
-		const response = await fetch(`/api/todos/${id}`, {
+		const response = await fetch(`/`, {
 			method: 'PUT',
-			headers: { 'Content-Type': 'application/json' }
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ complete })
 		})
-
+	
 		return await response.json()
 	}
-
+	
 	const displayTodos = todos => {
 		ul.innerHTML = ''
-		todos.forEach(({ id, item, complete }) => {
+		todos.forEach(({ _id, item, complete }) => {
 			const li = document.createElement('li')
 			ul.appendChild(li)
 
@@ -33,7 +34,7 @@
 			checkbox.type = 'checkbox'
 			checkbox.checked = complete
 			checkbox.addEventListener('change', async () => {
-				await toggleTodo(id, checkbox.checked)
+				await toggleTodo(_id, checkbox.checked)
 				displayTodos(await getTodos())
 			})
 			li.appendChild(checkbox)
@@ -43,10 +44,10 @@
 	displayTodos(await getTodos())
 
 	button.addEventListener('click', async () => {
-		const response = await fetch('/api/todos', {
+		const response = await fetch('/', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ item: input.value })
+			body: JSON.stringify({ item: input.value, complete: false })
 		})
 
 		input.value = ''
