@@ -25,13 +25,6 @@ app.use((request, response) => {
     response.status(404).sendFile('404.html', { root: path.join(__dirname, 'public') })
 })
 
-const getCollection = async (todo, todoAPI) => {
-    await client.connect()
-    return client.db('todoAPI').collection(todoAPI)
-}
-
-app.locals.getCollection = getCollection
-
 const message = `Server running: http://localhost:${port}`
 app.listen(port, () => console.log(message))
 
